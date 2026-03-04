@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Сайт КриСета</title>
+<link rel="icon" type="image/png" href="photo/popa.png">
+<style>
+body{
+    margin:0;
+    background:black;
+    overflow:hidden;
+    font-family:Arial, sans-serif;
+    color:lime;
+}
+
+.top-bar{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:42px;
+    background:rgba(0,0,0,0.95);
+    border-bottom:1px solid rgba(0,255,0,0.4);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    box-sizing:border-box;
+    z-index:50;
+    box-shadow:0 0 15px rgba(0,255,0,0.3);
+    font-size:14px;
+}
+
+.top-left, .top-right{
+    display:flex;
+    gap:20px;
+    align-items:center;
+}
+
+.grid{
+    position:fixed;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    background-image:
+        linear-gradient(rgba(0,255,0,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,0,0.15) 1px, transparent 1px);
+    background-size:40px 40px;
+    background-position:center center;
+    z-index:1;
+}
+
+.scanner{
+    position:fixed;
+    top:50%;
+    left:50%;
+    width:50%;
+    height:2px;
+    background:linear-gradient(to right, rgba(0,255,0,0.9), transparent);
+    transform-origin:left center;
+    animation:rotate 4s linear infinite;
+    z-index:3;
+}
+
+@keyframes rotate{
+    from{ transform:rotate(0deg); }
+    to{ transform:rotate(360deg); }
+}
+
+.point{
+    position:fixed;
+    width:14px;
+    height:14px;
+    background:lime;
+    border-radius:50%;
+    top:calc(50% - 40px);
+    left:calc(50% + 70px);
+    box-shadow:0 0 15px lime;
+    z-index:4;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.point:hover{
+    box-shadow:0 0 25px lime;
+    transform:scale(1.3);
+}
+
+.window{
+    position:fixed;
+    width:300px;
+    background:rgba(0,0,0,0.9);
+    border:1px solid rgba(0,255,0,0.5);
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 0 25px rgba(0,255,0,0.2);
+    z-index:10;
+}
+
+.window-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:8px 12px;
+    background:rgba(0,255,0,0.08);
+    border-bottom:1px solid rgba(0,255,0,0.3);
+    cursor:move;
+    font-size:14px;
+}
+
+.volume-slider{
+    -webkit-appearance:none;
+    appearance:none;
+    width:80px;
+    height:6px;
+    background:rgba(0,255,0,0.2);
+    border-radius:4px;
+    outline:none;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.volume-slider::-webkit-slider-runnable-track{
+    height:6px;
+    background:rgba(0,255,0,0.2);
+    border-radius:4px;
+}
+
+.volume-slider::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    appearance:none;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:lime;
+    box-shadow:0 0 8px lime;
+    margin-top:-4px;
+    transition:0.2s;
+}
+
+.volume-slider:hover::-webkit-slider-thumb{
+    box-shadow:0 0 15px lime;
+    transform:scale(1.2);
+}
+
+.volume-slider::-moz-range-thumb{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:lime;
+    box-shadow:0 0 8px lime;
+    border:none;
+}
+
+.volume-slider::-moz-range-track{
+    height:6px;
+    background:rgba(0,255,0,0.2);
+    border-radius:4px;
+}
+
+.window-buttons{
+    display:flex;
+    gap:6px;
+}
+
+.win-btn{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+}
+
+.close{ background:#ff5f56; }
+.minimize{ background:#ffbd2e; }
+.full{ background:#27c93f; }
+
+.window-content{
+    padding:12px;
+    max-height:320px;
+    overflow-y:auto;
+}
+
+.social-panel{
+    right:30px;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+.social-btn{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:10px 0;
+    padding:10px;
+    text-decoration:none;
+    border:1px solid rgba(0,255,0,0.4);
+    border-radius:8px;
+    transition:0.3s;
+    color:lime;
+}
+
+.social-btn:hover{
+    background:rgba(0,255,0,0.1);
+    box-shadow:0 0 15px lime;
+    transform:scale(1.05);
+}
+
+.social-tag{
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid lime;
+    border-radius:6px;
+    font-weight:bold;
+}
+
+.tabs{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+}
+
+.tab{
+    padding:6px 10px;
+    border:1px solid rgba(0,255,0,0.4);
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.tab.active{
+    background:rgba(0,255,0,0.2);
+}
+
+.gallery img{
+    width:100%;
+    margin-bottom:10px;
+    border:1px solid rgba(0,255,0,0.4);
+    border-radius:6px;
+}
+
+.player{
+    border:1px solid rgba(0,255,0,0.4);
+    border-radius:8px;
+    padding:10px;
+    margin-bottom:12px;
+    background:rgba(0,255,0,0.05);
+}
+
+.player-title{
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.controls{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.play-btn{
+    width:30px;
+    height:30px;
+    border:1px solid lime;
+    border-radius:6px;
+    background:transparent;
+    color:lime;
+    cursor:pointer;
+}
+
+.window-content::-webkit-scrollbar {
+    width:8px;
+}
+
+.window-content::-webkit-scrollbar-track {
+    background:rgba(0,255,0,0.08);
+    border-radius:10px;
+}
+
+.window-content::-webkit-scrollbar-thumb {
+    background:lime;
+    border-radius:10px;
+    box-shadow:0 0 8px lime;
+    transition:0.3s;
+}
+
+.window-content::-webkit-scrollbar-thumb:hover {
+    background:#00ff99;
+    box-shadow:0 0 15px #00ff99;
+}
+
+.window-content {
+    scrollbar-width:thin;
+    scrollbar-color:lime rgba(0,255,0,0.08);
+}
+
+.play-btn:hover{
+    background:rgba(0,255,0,0.2);
+}
+
+.progress{
+    flex:1;
+    height:6px;
+    background:rgba(0,255,0,0.2);
+    border-radius:4px;
+    cursor:pointer;
+    position:relative;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:lime;
+    border-radius:4px;
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="top-left">
+        <div id="dateTime">Загрузка времени...</div>
+    </div>
+    <div class="top-right">
+        <div id="ip">IP: ...</div>
+        <div>|</div>
+        <div>💚 Обо мне: Кодер, Контент-мейкер 💚</div>
+    </div>
+</div>
+
+<div class="grid"></div>
+<div class="scanner"></div>
+<div class="point"></div>
+
+<div class="window social-panel">
+    <div class="window-bar">
+        <span>Социалочка.exe</span>
+        <div class="window-buttons">
+            <div class="win-btn minimize"></div>
+            <div class="win-btn full"></div>
+            <div class="win-btn close"></div>
+        </div>
+    </div>
+    <div class="window-content">
+        <a class="social-btn" href="https://boosty.to/kristallik" target="_blank">
+            <div class="social-tag">BY</div> Boosty
+        </a>
+        <a class="social-btn" href="https://discord.gg/4hFDt7T8tv" target="_blank">
+            <div class="social-tag">DS</div> Discord
+        </a>
+        <a class="social-btn" href="https://www.youtube.com/@Kr1Set" target="_blank">
+            <div class="social-tag">YT</div> YouTube
+        </a>
+    </div>
+</div>
+
+<!-- Media окно -->
+<div class="window" id="mediaWindow" style="left:30px; top:120px;">
+    <div class="window-bar" id="dragBar">
+        <span>Медиа.exe</span>
+        <div class="window-buttons">
+            <div class="win-btn minimize"></div>
+            <div class="win-btn full"></div>
+            <div class="win-btn close"></div>
+        </div>
+    </div>
+
+    <div class="window-content">
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('music', this)">Музыка</div>
+            <div class="tab" onclick="switchTab('images', this)">Картинки</div>
+        </div>
+
+        <div id="musicTab">
+
+            <div class="player">
+                <div class="player-title">Космический мудак</div>
+                <div class="controls">
+                    <button class="play-btn">▶</button>
+                    <div class="progress"><div class="progress-bar"></div></div>
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="1">
+                </div>
+                <audio src="music/music1.mp3"></audio>
+            </div>
+
+            <div class="player">
+                <div class="player-title">Toxis - NOBODY</div>
+                <div class="controls">
+                    <button class="play-btn">▶</button>
+                    <div class="progress"><div class="progress-bar"></div></div>
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="1">
+                </div>
+                <audio src="music/music2.mp3"></audio>
+            </div>
+
+            <div class="player">
+                <div class="player-title">Тёмная политика</div>
+                <div class="controls">
+                    <button class="play-btn">▶</button>
+                    <div class="progress"><div class="progress-bar"></div></div>
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="1">
+                </div>
+                <audio src="music/music3.mp3"></audio>
+            </div>
+
+            <div class="player">
+                <div class="player-title">Feel good Inc. - Gorillaz</div>
+                <div class="controls">
+                    <button class="play-btn">▶</button>
+                    <div class="progress"><div class="progress-bar"></div></div>
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="1">
+                </div>
+                <audio src="music/music4.mp3"></audio>
+            </div>
+
+            <div class="player">
+                <div class="player-title">yung kai - blue</div>
+                <div class="controls">
+                    <button class="play-btn">▶</button>
+                    <div class="progress"><div class="progress-bar"></div></div>
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="1">
+                </div>
+                <audio src="music/music5.mp3"></audio>
+            </div>
+
+            <div class="player">
+                <div class="player-title">Финальный босс - социафобия</div>
+                <div class="controls">
+                    <button class="play-btn">▶</button>
+                    <div class="progress"><div class="progress-bar"></div></div>
+                    <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="1">
+                </div>
+                <audio src="music/music6.mp3"></audio>
+            </div>
+
+        </div>
+
+        <div id="imagesTab" style="display:none;" class="gallery">
+            <img src="photo/img1.jpg">
+            <img src="photo/img2.jpg">
+            <img src="photo/img3.jpg">
+            <img src="photo/img4.jpg">
+            <img src="photo/img5.jpg">
+            <img src="photo/img6.jpg">
+            <img src="photo/2.gif">
+            <img src="photo/popa.png">
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+const radarPoint = document.querySelector(".point");
+
+radarPoint.addEventListener("click", () => {
+    window.location.href = "https://youtu.be/dQw4w9WgXcQ?list=RDdQw4w9WgXcQ"; // <-- ВСТАВЬ СВОЮ ССЫЛКУ
+});
+
+function updateTime(){
+    const now = new Date();
+    const formatted = now.toLocaleString("ru-RU");
+    document.getElementById("dateTime").textContent = formatted;
+}
+setInterval(updateTime,1000);
+updateTime();
+
+fetch("https://api.ipify.org?format=json")
+.then(res=>res.json())
+.then(data=>{
+    document.getElementById("ip").textContent = "IP: " + data.ip;
+})
+.catch(()=>{
+    document.getElementById("ip").textContent = "IP: недоступен";
+});
+function switchTab(tab, el){
+    document.getElementById("musicTab").style.display = tab==="music"?"block":"none";
+    document.getElementById("imagesTab").style.display = tab==="images"?"block":"none";
+    document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+    el.classList.add("active");
+}
+
+const mediaWindow=document.getElementById("mediaWindow");
+const dragBar=document.getElementById("dragBar");
+let offsetX=0, offsetY=0, isDown=false;
+
+dragBar.addEventListener("mousedown",e=>{
+    isDown=true;
+    offsetX=mediaWindow.offsetLeft-e.clientX;
+    offsetY=mediaWindow.offsetTop-e.clientY;
+});
+document.addEventListener("mouseup",()=>isDown=false);
+document.addEventListener("mousemove",e=>{
+    if(isDown){
+        mediaWindow.style.left=(e.clientX+offsetX)+"px";
+        mediaWindow.style.top=(e.clientY+offsetY)+"px";
+    }
+});
+
+const players=document.querySelectorAll(".player");
+
+players.forEach(player=>{
+    const audio=player.querySelector("audio");
+    const volume = player.querySelector(".volume-slider");
+    audio.volume = volume.value;
+    volume.addEventListener("input", () => {
+        audio.volume = volume.value;
+    });
+    const btn=player.querySelector(".play-btn");
+    const progress=player.querySelector(".progress");
+    const bar=player.querySelector(".progress-bar");
+
+    btn.addEventListener("click",()=>{
+        players.forEach(p=>{
+            const a=p.querySelector("audio");
+            const b=p.querySelector(".play-btn");
+            if(a!==audio){
+                a.pause();
+                b.textContent="▶";
+            }
+        });
+
+        if(audio.paused){
+            audio.play();
+            btn.textContent="❚❚";
+        }else{
+            audio.pause();
+            btn.textContent="▶";
+        }
+    });
+
+    audio.addEventListener("timeupdate",()=>{
+        if(audio.duration){
+            const percent=(audio.currentTime/audio.duration)*100;
+            bar.style.width=percent+"%";
+        }
+    });
+
+    progress.addEventListener("click",e=>{
+        const width=progress.clientWidth;
+        const clickX=e.offsetX;
+        if(audio.duration){
+            audio.currentTime=(clickX/width)*audio.duration;
+        }
+    });
+
+    audio.addEventListener("ended",()=>{
+        btn.textContent="▶";
+        bar.style.width="0%";
+    });
+});
+
+</script>
+
+</body>
+</html>
