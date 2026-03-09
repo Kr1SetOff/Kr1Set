@@ -298,6 +298,13 @@ body{
     background:rgba(0,255,0,0.2);
 }
 
+.flying-gif{
+    position:fixed;
+    width:60px;
+    pointer-events:none;
+    z-index:2;
+}
+
 .progress{
     flex:1;
     height:6px;
@@ -455,6 +462,52 @@ body{
 </div>
 
 <script>
+
+const GIF_COUNT = 12; // сколько гифок
+
+const gifs = [];
+
+for(let i = 0; i < GIF_COUNT; i++){
+
+    const gif = document.createElement("img");
+    gif.src = "photo/bg.gif";
+    gif.className = "flying-gif";
+
+    document.body.appendChild(gif);
+
+    gifs.push({
+        el: gif,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        dx: (Math.random() - 0.5) * 4,
+        dy: (Math.random() - 0.5) * 4,
+        angle: Math.random() * 360
+    });
+
+}
+
+function animateGifs(){
+
+    gifs.forEach(g => {
+
+        g.x += g.dx;
+        g.y += g.dy;
+        g.angle += 2;
+
+        if(g.x <= 0 || g.x >= window.innerWidth - 60) g.dx *= -1;
+        if(g.y <= 0 || g.y >= window.innerHeight - 60) g.dy *= -1;
+
+        g.el.style.left = g.x + "px";
+        g.el.style.top = g.y + "px";
+        g.el.style.transform = `rotate(${g.angle}deg)`;
+
+    });
+
+    requestAnimationFrame(animateGifs);
+}
+
+animateGifs();
+
 
 const radarPoint = document.querySelector(".point");
 
